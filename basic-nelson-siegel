@@ -1,0 +1,31 @@
+data {
+  int <lower = 0> N; // number of observations
+  vector[N] yield;
+  vector[N] tau;
+
+}
+
+parameters {
+  vector[3] beta;
+  real <lower = 0> lambda;
+  real <lower = 0> sigma;
+
+}
+
+transformed parameters {
+  vector[N] mu;
+
+  for (i in 1:N)
+    mu[i] = beta[1] + (beta[2]+beta[3])*(lambda/tau[i])*(1 - exp(-tau[i]/lambda)) - beta[3]*(exp(-tau[i]/lambda));
+
+}
+
+model {
+
+  beta ~ normal(0,1);
+  lambda ~ normal(0,1);
+  sigma ~ normal(0,1);
+
+  yield ~ normal(mu,sigma);
+
+}
